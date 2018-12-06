@@ -5,6 +5,7 @@ import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import org.apache.commons.lang.StringUtils;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,10 @@ public class ConsumerSetHbase {
         prop.put("group.id","phone");
         // 配置从头消费数据
         //prop.put("auto.offset.reset","smallest");
+
+        /*KafkaConsumer<String,String> consumer = new KafkaConsumer<String, String>(prop);
+        consumer.subscribe("","","");*/
+
         //
         ConsumerConfig config = new ConsumerConfig(prop);
         // 创建消费者

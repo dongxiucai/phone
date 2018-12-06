@@ -8,15 +8,19 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.DecimalFormat;
+
 
 public class HbaseUtil {
 
     // 配置conf
     static Configuration configuration = null;
 
-
+    /**
+     * 存放log
+     * @param log
+     * @throws Exception
+     */
     public static void setLog(String log) throws Exception {
         // 切割字符串
         // 打电话者 手机号 接电话者 手机号 年 月日 时间间隔
@@ -30,16 +34,24 @@ public class HbaseUtil {
             String calledPhone = split[3];
             String date = split[4];
             String calllong = split[5];
-            // 时间戳
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            Date de = sdf.parse(date);
-            long deTime = de.getTime();
+
+            // 生成分区
+            // 取后四位
+            String ph = callPhone.substring(7);
+            // 取日期前6位
+            String[] sp = date.split("-");
+            String da = sp[0]+sp[1];
+            // 取模，求分区
+            int qu = (Integer.valueOf(ph)+Integer.valueOf(da))%6;
+            // 格式化qu
+            DecimalFormat df = new DecimalFormat("00");//设置格式
+            String strMo = df.format(qu);//格式转换
             // 生成rowkey
-            // row+手机号+时间戳
-            String rowkey = "row" + calledName + deTime;
+            // 01+手机号后四位+201708+
+            String rowkey = strMo + "_" + callPhone + "_" +da;
             // 存到hbase
             PutData(rowkey,callName,callPhone,calledName,calledPhone,date,calllong);
-            //
+
         }
     }
 
