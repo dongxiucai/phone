@@ -47,6 +47,11 @@ public class ConsumerSetHbase {
         // 创建获取信息
         Map<String, List<KafkaStream<byte[],byte[]>>> message = con.createMessageStreams(map);
         List<KafkaStream<byte[],byte[]>> kafkaStrems = message.get(TOPIC_NAME);
+
+        // 初始化
+        HbaseUtil.init("spark101,spark102,spark103","2181");
+        // 创建一张表
+        HbaseUtil.createTableHbase("phone:log2",6,"info");
         // 循环接受map内的Topic数据
         for(KafkaStream<byte[],byte[]> stream : kafkaStrems){
             new Thread(new Runnable() {
@@ -56,8 +61,6 @@ public class ConsumerSetHbase {
                         // 获得log日志消息
                         String log = new String(m.message());
                         // 把消息存储到hbase上
-                        // 初始化
-                        HbaseUtil.init("spark101,spark102,spark103","2181");
                         // 存储set
                         try {
                             // 判断log不为空
