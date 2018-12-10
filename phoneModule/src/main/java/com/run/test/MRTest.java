@@ -35,7 +35,7 @@ public class MRTest {
         job.setNumReduceTasks(0);
         //
         FileInputFormat.setInputPaths(job,new Path("D:\\Demo\\hadoop\\ouput\\out2\\part-r-00000"));
-        DBOutputFormat.setOutput(job,"mrtest","num","llong");
+        DBOutputFormat.setOutput(job,"mrtest","phone","month","llong");
         job.setOutputFormatClass(DBOutputFormat.class);
         // 提交
         boolean isSuccess = job.waitForCompletion(true);
@@ -55,12 +55,14 @@ class Mapp extends Mapper<LongWritable,Text,BeanTest, BeanTest> {
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         //
         String[] split = value.toString().split("\t");
-        String num = split[0];
+        String phone = split[0].split("_")[0];
+        String month = split[0].split("_")[1];
         String llong = split[1];
-        System.out.println("======: "+num+" : "+llong);
+        System.out.println("======: "+phone+" : "+" : "+llong);
         /*ke.set(num);
         va.set(llong);*/
-        ke.setNum(num);
+        ke.setPhone(phone);
+        ke.setMonth(month);
         ke.setLlong(llong);
         context.write(ke,null);
     }
@@ -85,15 +87,24 @@ class Mapp extends Mapper<LongWritable,Text,BeanTest, BeanTest> {
 // bean
 class BeanTest implements DBWritable {
 
-    private String num; // 电话号码
+    private String phone; // 电话号码
+    private String month; // 月份
     private String llong; // 通话时长
 
-    public String getNum() {
-        return num;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setNum(String num) {
-        this.num = num;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
     }
 
     public String getLlong() {
@@ -106,13 +117,15 @@ class BeanTest implements DBWritable {
 
     @Override
     public void write(PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.setString(1,this.num);
-        preparedStatement.setString(2,this.llong);
+        preparedStatement.setString(1,this.phone);
+        preparedStatement.setString(2,this.month);
+        preparedStatement.setString(3,this.llong);
     }
 
     @Override
     public void readFields(ResultSet resultSet) throws SQLException {
-        this.num = resultSet.getString(1);
-        this.llong = resultSet.getString(2);
+        this.phone = resultSet.getString(1);
+        this.month = resultSet.getString(2);
+        this.llong = resultSet.getString(3);
     }
 }
