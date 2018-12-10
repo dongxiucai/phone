@@ -13,30 +13,26 @@ import java.text.ParseException;
 /**
  * 把结果聚合后输入到Mysql中
  */
-public class WriteMysqlReduce extends Reducer<Text, Text, CallPhoneData, CallPhoneData> {
-
-    CallPhoneData ke = new CallPhoneData();
-    CallPhoneData va = new CallPhoneData();
+public class WriteMysqlReduce extends Reducer<CallPhoneData, Text, CallPhoneData, NullWritable> {
 
     @Override
-    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        int dateLong = 0;
-        // key手机号_年份月份
-        // 统计通话时长，秒
+    protected void reduce(CallPhoneData key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        // 总分钟
+        int call_sum = 0;
+        // 总次数
+        int call_duration_sum = 0;
+        // 迭代
         for(Text calllong : values){
             // 装换
             Integer llong = Integer.valueOf(calllong.toString());
-            dateLong =+ llong;
+            call_sum =+ llong;
+            // 次数
+            call_duration_sum++;
         }
-        // 切割key
-        String[] split = key.toString().split("_");
-        // 取出手机号，作为id
-        ke.setId(split[0]);
-        // 取出年月
-        ke.setYearM(split[1]);
-        // 取出通话时长
-        ke.setCalllong(String.valueOf(dateLong));
+        // 封装数据到key
+        key.setCall_sum(call_sum);
+        key.setCall_duration_sum(call_duration_sum);
         // 输出到文件
-        context.write(ke,null);
+        context.write(key,NullWritable.get());
     }
 }

@@ -1,57 +1,82 @@
 package com.run.pojo;
 
+import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.lib.db.DBWritable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CallPhoneData implements DBWritable {
+public class CallPhoneData implements WritableComparable<CallPhoneData> {
 
-    private String id; // id 手机号
-    private String yearM; // 年月
-    private String calllong; // 通话时长
+    private CallDate callDate = new CallDate(); // 时间
+    private CallPeople callPhone = new CallPeople(); // 电话
+    private int call_sum; // 通话时长
+    private int call_duration_sum; // 通话次数
 
-    public CallPhoneData(){
-
+    public CallDate getCallDate() {
+        return callDate;
     }
 
-
-    public String getId() {
-        return id;
+    public void setCallDate(CallDate callDate) {
+        this.callDate = callDate;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public CallPeople getCallPhone() {
+        return callPhone;
     }
 
-    public String getYearM() {
-        return yearM;
+    public void setCallPhone(CallPeople callPhone) {
+        this.callPhone = callPhone;
     }
 
-    public void setYearM(String yearM) {
-        this.yearM = yearM;
+    public int getCall_sum() {
+        return call_sum;
     }
 
-    public String getCalllong() {
-        return calllong;
+    public void setCall_sum(int call_sum) {
+        this.call_sum = call_sum;
     }
 
-    public void setCalllong(String calllong) {
-        this.calllong = calllong;
+    public int getCall_duration_sum() {
+        return call_duration_sum;
     }
 
-    @Override
-    public void write(PreparedStatement preparedStatement) throws SQLException {
-        preparedStatement.setString(1,id);
-        preparedStatement.setString(2,yearM);
-        preparedStatement.setString(3,calllong);
+    public void setCall_duration_sum(int call_duration_sum) {
+        this.call_duration_sum = call_duration_sum;
     }
 
     @Override
-    public void readFields(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getString(1);
-        this.yearM = resultSet.getString(2);
-        this.calllong = resultSet.getString(3);
+    public int compareTo(CallPhoneData o) {
+        int res = this.callDate.compareTo(o.callDate);
+        if(res != 0) return res;
+        res = this.callPhone.compareTo(o.callPhone);
+        return res;
+    }
+
+    @Override
+    public void write(DataOutput out) throws IOException {
+        this.callDate.write(out);
+        this.callPhone.write(out);
+        out.writeInt(this.call_sum);
+        out.writeInt(this.call_duration_sum);
+    }
+
+    @Override
+    public void readFields(DataInput in) throws IOException {
+        this.callDate.readFields(in);
+        this.callPhone.readFields(in);
+        this.call_sum = in.readInt();
+        this.call_duration_sum = in.readInt();
+    }
+
+    @Override
+    public String toString() {
+        return this.getCallPhone().getName()+"\t"+this.getCallPhone().getPhoneNum()+
+                "\t"+this.getCallDate().getYear()+"\t"+this.getCallDate().getMonth()+"\t"+this.getCallDate().getDay()+
+                "\t"+this.getCall_sum()+"\t"+this.getCall_duration_sum();
     }
 }

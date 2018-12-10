@@ -85,7 +85,7 @@ class ETLMapper extends Mapper<LongWritable, Text, Text, NullWritable> {
             ETLUtils.initImg();
             // 提交信息到文件
             ke.set(contextDate.replaceAll(" ","") + "\t" + contextDetalisImg);
-            // 酒店房间图片，中间，隔开 酒店房间评价 酒店房间信息 酒店房间详情 酒店房间详情图片中间用|隔开
+            // 酒店房间图片中间，隔开 \t酒店房间评价\t酒店房间信息\t酒店房间详情\t酒店房间详情图片中间用|隔开
             context.write(ke,NullWritable.get());
         } else {
             // 继续累加信息累加

@@ -10,13 +10,14 @@ import java.util.regex.Pattern;
 
 public class test {
     public static void main(String[] args) {
-        /*String str = "01_手机号_yyyyMMddhhmmss_1";
+
+        String str = "01_手机号_yyyyMMddhhmmss_1";
         String[] split = str.split("_");
-        String substring = split[2].substring(0, 6);
+        String substring = split[2].substring(4, 6);
         System.out.println(substring);
 
 
-        Long dateLong = 0L;
+       /* Long dateLong = 0L;
         // 相同手机号，年份月份
         // 统计通话时长，秒
         List<String> values = new ArrayList<>();
@@ -112,7 +113,7 @@ public class test {
 
 
 
-        String str = "<img alt=\"\" src=\"http://pic.lvmama.com/uploads/pc/place2/2016-02-26/a0881e11-60ae-43d6-a57b-5ee0f5ae224f.jpg\" width=\"90%\">";
+        String str1 = "<img alt=\"\" src=\"http://pic.lvmama.com/uploads/pc/place2/2016-02-26/a0881e11-60ae-43d6-a57b-5ee0f5ae224f.jpg\" width=\"90%\">";
 
         // <(img|IMG)(.*?)(/>|></img>|>)
        // String img = "<img(.*?)(/>)>";
